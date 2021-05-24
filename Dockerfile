@@ -1,6 +1,6 @@
 FROM elixir:1.11-alpine as build
 
-ARG RELEASE_TAG="soapbox-v1.1.0"
+ARG RELEASE_TAG="soapbox-v1.1.1"
 ARG MIX_ENV=prod
 
 RUN apk --update add --no-cache git gcc g++ musl-dev make cmake file-dev \
