@@ -57,6 +57,11 @@ COPY --from=build --chown=pleroma:0 /pleroma/config/docker.exs /etc/pleroma/conf
 COPY ./bin /usr/local/bin
 COPY ./entrypoint.sh /entrypoint.sh
 
+RUN set -eux \
+&&  curl -L https://gitlab.com/soapbox-pub/soapbox-fe/-/jobs/artifacts/v1.3.0/download?job=build-production -o /tmp/soapbox-fe.zip \
+&&  busybox unzip /tmp/soapbox-fe.zip -o -d /opt/pleroma/instance \
+&&  rm -f /tmp/soapbox-fe.zip
+
 VOLUME $DATA
 
 EXPOSE 4000
