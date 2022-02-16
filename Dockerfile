@@ -1,10 +1,10 @@
-FROM elixir:1.11-alpine as build
+FROM elixir:1.13-alpine as build
 
-ARG RELEASE_TAG="soapbox-v1.1.1"
+ARG RELEASE_TAG="latest"
 ARG MIX_ENV=prod
 
 RUN apk --update add --no-cache git gcc g++ musl-dev make cmake file-dev \
-&&  git clone -b "$RELEASE_TAG" --single-branch https://gitlab.com/soapbox-pub/soapbox.git /pleroma \
+&&  git clone https://gitlab.com/soapbox-pub/soapbox.git /pleroma \
 &&  cd /pleroma \
 &&  echo "import Mix.Config" > config/prod.secret.exs \
 &&  mix local.hex --force \
