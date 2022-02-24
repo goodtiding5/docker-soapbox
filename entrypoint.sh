@@ -10,6 +10,11 @@ PATH=$PATH:$WORKDIR/bin; export PATH
 [ -d $DATADIR/static ]	|| mkdir -p $DATADIR/static
 [ -d $DATADIR/uploads ]	|| mkdir -p $DATADIR/uploads
 
+if [ -f $WORKDIR/soapbox-fe.zip ]; then
+    unzip $WORKDIR/soapbox-fe.zip -o -d $DATADIR
+    rm -f $WORKDIR/soapbox-fe.zip
+fi
+
 chown -R pleroma:pleroma $WORKDIR
 chown -R pleroma:pleroma $DATADIR
 
