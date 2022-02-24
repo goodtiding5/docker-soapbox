@@ -1,11 +1,35 @@
-FROM elixir:1.13-alpine as build
+# -------------------------------------------------------------------------------------------------------
+
+FROM node:16-alpine3.14 as fe-build
+
+ARG NODE_ENV=production
+
+RUN set -ex \
+&&  apk --update add --no-cache git zip \
+&&  git clone -b develop https://gitlab.com/soapbox-pub/soapbox-fe.git /build
+
+WORKDIR /build
+
+RUN set -ex \
+&&  yarn \
+&&  yarn build \
+&&  mkdir -p /release \
+&&  zip -r /release/soapbox-fe.zip ./static
+
+# -------------------------------------------------------------------------------------------------------
+
+FROM elixir:1.9-alpine as be-build
 
 ARG RELEASE_TAG="latest"
 ARG MIX_ENV=prod
 
-RUN apk --update add --no-cache git gcc g++ musl-dev make cmake file-dev \
-&&  git clone https://gitlab.com/soapbox-pub/soapbox.git /pleroma \
-&&  cd /pleroma \
+RUN set -ex \
+&&  apk --update add --no-cache git gcc g++ musl-dev make cmake file-dev \
+&&  git clone https://gitlab.com/soapbox-pub/soapbox-be.git /pleroma
+
+WORKDIR /pleroma
+
+RUN set -ex \
 &&  echo "import Mix.Config" > config/prod.secret.exs \
 &&  mix local.hex --force \
 &&  mix local.rebar --force \
@@ -15,7 +39,7 @@ RUN apk --update add --no-cache git gcc g++ musl-dev make cmake file-dev \
 
 # -------------------------------------------------------------------------------------------------------
 
-FROM alpine:3
+FROM alpine:3.14
 
 LABEL maintainer="ken@epenguin.com"
 
@@ -51,16 +75,12 @@ RUN set -eux \
 &&  mkdir -p /etc/pleroma \
 &&  chown -R pleroma:root /etc/pleroma
 
-COPY --from=build --chown=pleroma:0 /release ${HOME}
-COPY --from=build --chown=pleroma:0 /pleroma/config/docker.exs /etc/pleroma/config.exs
+COPY --from=be-build --chown=pleroma:0 /release ${HOME}
+COPY --from=be-build --chown=pleroma:0 /pleroma/config/docker.exs /etc/pleroma/config.exs
+COPY --from=fe-build --chown=pleroma:pleroma /release/soapbox-fe.zip ${HOME}
 
 COPY ./bin /usr/local/bin
 COPY ./entrypoint.sh /entrypoint.sh
-
-RUN set -eux \
-&&  curl -L https://gitlab.com/soapbox-pub/soapbox-fe/-/jobs/artifacts/v1.3.0/download?job=build-production -o /tmp/soapbox-fe.zip \
-&&  busybox unzip /tmp/soapbox-fe.zip -o -d /opt/pleroma/instance \
-&&  rm -f /tmp/soapbox-fe.zip
 
 VOLUME $DATA
 
