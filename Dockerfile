@@ -12,6 +12,7 @@ WORKDIR /build
 
 RUN set -ex \
 &&  yarn \
+&&  yarn add danger \
 &&  yarn build \
 &&  mkdir -p /release \
 &&  zip -r /release/soapbox-fe.zip ./static
