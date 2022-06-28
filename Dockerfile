@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------------------------------------
 
-FROM node:16-alpine3.14 as fe-build
+FROM node:16-alpine3.16 as fe-build
 
 ARG NODE_ENV=production
 
@@ -40,7 +40,7 @@ RUN set -ex \
 
 # -------------------------------------------------------------------------------------------------------
 
-FROM alpine:3.14
+FROM alpine:3.16
 
 LABEL maintainer="ken@epenguin.com"
 
