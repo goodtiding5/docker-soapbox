@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------------------------------------
 
-FROM node:16-alpine3.16 as fe-build
+FROM node:18-alpine3.15 as fe-build
 
 ARG NODE_ENV=production
 
@@ -12,7 +12,7 @@ WORKDIR /build
 
 RUN set -ex \
 &&  yarn \
-&&  yarn add danger \
+&&  yarn install \
 &&  yarn build \
 &&  mkdir -p /release \
 &&  zip -r /release/soapbox-fe.zip ./static
