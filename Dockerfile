@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------------------------------------
 
-FROM node:16-alpine3.14 as fe-build
+FROM node:18-alpine3.15 as fe-build
 
 ARG NODE_ENV=production
 
@@ -12,7 +12,9 @@ WORKDIR /build
 
 RUN set -ex \
 &&  yarn \
+&&  yarn install \
 &&  yarn add danger \
+&&  yarn add typescript --dev \
 &&  yarn build \
 &&  mkdir -p /release \
 &&  zip -r /release/soapbox-fe.zip ./static
@@ -40,7 +42,7 @@ RUN set -ex \
 
 # -------------------------------------------------------------------------------------------------------
 
-FROM alpine:3.14
+FROM alpine:3.16
 
 LABEL maintainer="ken@epenguin.com"
 
