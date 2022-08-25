@@ -79,7 +79,7 @@ STOPSIGNAL SIGTERM
 HEALTHCHECK \
     --start-period=10m \
     --interval=5m \ 
-    CMD curl --fail http://localhost:4000/api/v1/instance || exit 1
+    CMD curl --fail http://localhost:5000/api/v1/instance || exit 1
 
 ENTRYPOINT ["tini", "--", "/entrypoint.sh"]
 
