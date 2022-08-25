@@ -14,6 +14,7 @@ RUN set -ex \
 &&  yarn \
 &&  yarn install \
 &&  yarn add danger \
+&&  yarn add typescript --dev \
 &&  yarn build \
 &&  mkdir -p /release \
 &&  zip -r /release/soapbox-fe.zip ./static
