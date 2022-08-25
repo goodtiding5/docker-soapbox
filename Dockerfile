@@ -1,36 +1,17 @@
 # -------------------------------------------------------------------------------------------------------
 
-FROM node:18-alpine3.15 as fe-build
-
-ARG NODE_ENV=production
-
-RUN set -ex \
-&&  apk --update add --no-cache git zip \
-&&  git clone -b develop https://gitlab.com/soapbox-pub/soapbox-fe.git /build
-
-WORKDIR /build
-
-RUN set -ex \
-&&  yarn \
-&&  yarn install \
-&&  yarn add danger \
-&&  yarn add typescript --dev \
-&&  yarn build \
-&&  mkdir -p /release \
-&&  zip -r /release/soapbox-fe.zip ./static
-
-# -------------------------------------------------------------------------------------------------------
-
-FROM elixir:1.9-alpine as be-build
+FROM elixir:1.9-alpine as build
 
 ARG RELEASE_TAG="latest"
 ARG MIX_ENV=prod
 
 RUN set -ex \
 &&  apk --update add --no-cache git gcc g++ musl-dev make cmake file-dev \
-&&  git clone https://gitlab.com/soapbox-pub/soapbox-be.git /pleroma
+&&  git clone https://gitlab.com/soapbox-pub/rebased.git /pleroma
 
 WORKDIR /pleroma
+
+ENV MIX_ENV=${MIX_ENV}
 
 RUN set -ex \
 &&  echo "import Mix.Config" > config/prod.secret.exs \
@@ -74,16 +55,20 @@ RUN set -eux \
 &&  addgroup --gid "$GID" pleroma \
 &&  adduser --disabled-password --gecos "Pleroma" --home "$HOME" --ingroup pleroma --uid "$UID" pleroma \
 &&  mkdir -p ${HOME} ${DATA}/uploads ${DATA}/static \
+&&  curl -L "https://gitlab.com/soapbox-pub/soapbox-fe/-/jobs/artifacts/develop/download?job=build-production" -o /tmp/soapbox-fe.zip \
+&&  unzip -o /tmp/soapbox-fe.zip -d ${DATA} \
+&&  rm -f /tmp/soapbox-fe.zip \
 &&  chown -R pleroma:pleroma ${HOME} ${DATA} \
 &&  mkdir -p /etc/pleroma \
 &&  chown -R pleroma:root /etc/pleroma
 
-COPY --from=be-build --chown=pleroma:0 /release ${HOME}
-COPY --from=be-build --chown=pleroma:0 /pleroma/config/docker.exs /etc/pleroma/config.exs
-COPY --from=fe-build --chown=pleroma:pleroma /release/soapbox-fe.zip ${HOME}
+COPY --from=build --chown=pleroma:0 /release ${HOME}
+COPY --from=build --chown=pleroma:0 /pleroma/config/docker.exs /etc/pleroma/config.exs
 
 COPY ./bin /usr/local/bin
 COPY ./entrypoint.sh /entrypoint.sh
+
+USER pleroma
 
 VOLUME $DATA
 
@@ -97,3 +82,4 @@ HEALTHCHECK \
     CMD curl --fail http://localhost:4000/api/v1/instance || exit 1
 
 ENTRYPOINT ["tini", "--", "/entrypoint.sh"]
+

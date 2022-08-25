@@ -7,17 +7,6 @@ DATADIR=/var/lib/pleroma
 
 PATH=$PATH:$WORKDIR/bin; export PATH
 
-[ -d $DATADIR/static ]	|| mkdir -p $DATADIR/static
-[ -d $DATADIR/uploads ]	|| mkdir -p $DATADIR/uploads
-
-if [ -f $WORKDIR/soapbox-fe.zip ]; then
-    unzip $WORKDIR/soapbox-fe.zip -o -d $DATADIR
-    rm -f $WORKDIR/soapbox-fe.zip
-fi
-
-chown -R pleroma:pleroma $WORKDIR
-chown -R pleroma:pleroma $DATADIR
-
 if [[ -t 0 || -p /dev/stdin ]]; then
     # we have an interactive session
     export PS1='[\u@\h : \w]\$ '
@@ -30,7 +19,7 @@ else
     if [[ $@ ]]; then
 	eval "exec $@"
     else
-	exec su-exec pleroma /usr/local/bin/start_pleroma.sh
+	/usr/local/bin/start_pleroma.sh
     fi
 fi
 
