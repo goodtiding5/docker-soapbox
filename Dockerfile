@@ -68,11 +68,9 @@ COPY --from=build --chown=pleroma:0 /pleroma/config/docker.exs /etc/pleroma/conf
 COPY ./bin /usr/local/bin
 COPY ./entrypoint.sh /entrypoint.sh
 
-USER pleroma
-
 VOLUME $DATA
 
-EXPOSE 4000
+EXPOSE 5000
 
 STOPSIGNAL SIGTERM
 
@@ -80,6 +78,8 @@ HEALTHCHECK \
     --start-period=10m \
     --interval=5m \ 
     CMD curl --fail http://localhost:5000/api/v1/instance || exit 1
+
+USER pleroma
 
 ENTRYPOINT ["tini", "--", "/entrypoint.sh"]
 
