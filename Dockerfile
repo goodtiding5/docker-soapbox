@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------------------------------------
 
-FROM elixir:1.9-alpine as build
+FROM elixir:1.12-alpine as build
 
 ARG RELEASE_TAG="latest"
 ARG MIX_ENV=prod
