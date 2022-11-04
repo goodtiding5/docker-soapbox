@@ -13,11 +13,14 @@ WORKDIR /pleroma
 
 ENV MIX_ENV=${MIX_ENV}
 
+# setup elixir environment
 RUN set -ex \
 &&  echo "import Mix.Config" > config/prod.secret.exs \
 &&  mix local.hex --force \
-&&  mix local.rebar --force \
-&&  mix deps.get --only prod \
+&&  mix local.rebar --force
+
+# build into the relase
+RUN mix deps.get --only prod \
 &&  mkdir -p /release \
 &&  mix release --path /release
 
