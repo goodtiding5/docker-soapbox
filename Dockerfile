@@ -7,7 +7,10 @@ ARG MIX_ENV=prod
 
 RUN set -ex \
 &&  apk --update add --no-cache git gcc g++ musl-dev make cmake file-dev \
-&&  git clone https://gitlab.com/soapbox-pub/rebased.git /pleroma
+&&  git clone https://gitlab.com/soapbox-pub/rebased.git /pleroma \
+&&  git clone https://github.com/facebookresearch/fastText.git /fastText
+
+## build rebase
 
 WORKDIR /pleroma
 
@@ -19,10 +22,19 @@ RUN set -ex \
 &&  mix local.hex --force \
 &&  mix local.rebar --force
 
-# build into the relase
+# build soapbox/rebase into the relase dir
 RUN mix deps.get --only prod \
 &&  mkdir -p /release \
 &&  mix release --path /release
+
+## build fasttext
+
+WORKDIR /fastText
+
+RUN set -ex \
+&&  make \
+&&  mkdir -p /dist \
+&&  cp fasttext /dist
 
 # -------------------------------------------------------------------------------------------------------
 
@@ -65,6 +77,7 @@ RUN set -eux \
 &&  mkdir -p /etc/pleroma \
 &&  chown -R pleroma:root /etc/pleroma
 
+COPY --from=build --chown=0:0 /dist/fasttext /usr/local/bin
 COPY --from=build --chown=pleroma:0 /release ${HOME}
 COPY --from=build --chown=pleroma:0 /pleroma/config/docker.exs /etc/pleroma/config.exs
 
