@@ -56,9 +56,11 @@ ENV DOMAIN=localhost \
     DB_USER="pleroma" \
     DB_PASS="pleroma"
 
+ADD https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz /usr/share/fasttext/
+ADD https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin /usr/share/fasttext/
+
 RUN set -eux \
 &&  apk --update add --no-cache \
-        tini \
 	curl \
 	su-exec \
 	ncurses \
@@ -75,11 +77,10 @@ RUN set -eux \
 &&  rm -f /tmp/soapbox-fe.zip \
 &&  chown -R pleroma:pleroma ${HOME} ${DATA} \
 &&  mkdir -p /etc/pleroma \
-&&  chown -R pleroma:root /etc/pleroma
+&&  chown -R pleroma:root /etc/pleroma \
+&&  chmod 0644 /usr/share/fasttext/*
 
 COPY --from=build --chown=0:0 /dist/fasttext /usr/local/bin
-ADD  https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz /usr/share/fasttext/
-ADD  https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin /usr/share/fasttext/
 
 COPY --from=build --chown=pleroma:0 /release ${HOME}
 COPY --from=build --chown=pleroma:0 /pleroma/config/docker.exs /etc/pleroma/config.exs
@@ -100,5 +101,5 @@ HEALTHCHECK \
 
 USER pleroma
 
-ENTRYPOINT ["tini", "--", "/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 
