@@ -78,6 +78,9 @@ RUN set -eux \
 &&  chown -R pleroma:root /etc/pleroma
 
 COPY --from=build --chown=0:0 /dist/fasttext /usr/local/bin
+ADD  https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz /usr/share/fasttext/
+ADD  https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin /usr/share/fasttext/
+
 COPY --from=build --chown=pleroma:0 /release ${HOME}
 COPY --from=build --chown=pleroma:0 /pleroma/config/docker.exs /etc/pleroma/config.exs
 
