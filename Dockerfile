@@ -7,7 +7,7 @@ ARG MIX_ENV=prod
 
 RUN set -ex \
 &&  apk --update add --no-cache git gcc g++ musl-dev make cmake file-dev \
-&&  git clone https://gitlab.com/soapbox-pub/rebased.git /pleroma \
+&&  git clone https://gitlab.com/goodtiding5/rebased.git /pleroma \
 &&  git clone https://github.com/facebookresearch/fastText.git /fastText
 
 ## build rebase
