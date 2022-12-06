@@ -72,13 +72,12 @@ RUN set -eux \
 &&  addgroup --gid "$GID" pleroma \
 &&  adduser --disabled-password --gecos "Pleroma" --home "$HOME" --ingroup pleroma --uid "$UID" pleroma \
 &&  mkdir -p ${HOME} ${DATA}/uploads ${DATA}/static \
-&&  curl -L "https://gitlab.com/soapbox-pub/soapbox-fe/-/jobs/artifacts/develop/download?job=build-production" -o /tmp/soapbox-fe.zip \
-&&  unzip -o /tmp/soapbox-fe.zip -d ${DATA} \
-&&  rm -f /tmp/soapbox-fe.zip \
 &&  chown -R pleroma:pleroma ${HOME} ${DATA} \
 &&  mkdir -p /etc/pleroma \
 &&  chown -R pleroma:root /etc/pleroma \
-&&  chmod 0644 /usr/share/fasttext/*
+&&  chmod 0644 /usr/share/fasttext/* \
+&&  mkdir /dist \
+&&  curl -L "https://gitlab.com/soapbox-pub/soapbox-fe/-/jobs/artifacts/develop/download?job=build-production" -o /dist/soapbox-fe.zip
 
 COPY --from=build --chown=0:0 /dist/fasttext /usr/local/bin
 
