@@ -57,7 +57,6 @@ ENV DOMAIN=localhost \
     DB_PASS="pleroma"
 
 ADD https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz /usr/share/fasttext/
-ADD https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin /usr/share/fasttext/
 
 RUN set -eux \
 &&  apk --update add --no-cache \
@@ -75,7 +74,7 @@ RUN set -eux \
 &&  chown -R pleroma:pleroma ${HOME} ${DATA} \
 &&  mkdir -p /etc/pleroma \
 &&  chown -R pleroma:root /etc/pleroma \
-&&  chmod 0644 /usr/share/fasttext/* \
+&&  chmod 0644 /usr/share/fasttext/lid.176.ftz \
 &&  mkdir /dist \
 &&  curl -L "https://gitlab.com/soapbox-pub/soapbox-fe/-/jobs/artifacts/develop/download?job=build-production" -o /dist/soapbox-fe.zip
 
