@@ -74,9 +74,7 @@ RUN set -eux \
 &&  chown -R pleroma:pleroma ${HOME} ${DATA} \
 &&  mkdir -p /etc/pleroma \
 &&  chown -R pleroma:root /etc/pleroma \
-&&  chmod 0644 /usr/share/fasttext/lid.176.ftz \
-&&  mkdir /dist \
-&&  curl -L "https://gitlab.com/soapbox-pub/soapbox/-/jobs/artifacts/v3.1.0/download?job=build-production" -o /dist/soapbox-fe.zip
+&&  chmod 0644 /usr/share/fasttext/lid.176.ftz
 
 COPY --from=build --chown=0:0 /dist/fasttext /usr/local/bin
 COPY --from=build --chown=pleroma:0 /release ${HOME}
