@@ -5,6 +5,7 @@ FROM elixir:1.11-alpine as build
 ARG MIX_ENV=prod
 
 RUN set -ex \
+&&  awk 'NR==2' /etc/apk/repositories | sed 's/main/community/' | tee -a /etc/apk/repositories \
 &&  apk --update add --no-cache git gcc g++ musl-dev make cmake file-dev \
 &&  git clone https://gitlab.com/goodtiding5/rebased.git /pleroma \
 &&  git clone https://github.com/facebookresearch/fastText.git /fastText
@@ -58,15 +59,19 @@ ENV DOMAIN=localhost \
 ADD https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz /usr/share/fasttext/
 
 RUN set -eux \
+&&  awk 'NR==2' /etc/apk/repositories | sed 's/main/community/' | tee -a /etc/apk/repositories \
 &&  apk --update add --no-cache \
 	curl \
+	unzip \
 	su-exec \
 	ncurses \
 	postgresql-client \
+	postgresql-contrib \
 	imagemagick \
 	ffmpeg \
 	exiftool \
 	libmagic \
+	file-dev \
 &&  addgroup --gid "$GID" pleroma \
 &&  adduser --disabled-password --gecos "Pleroma" --home "$HOME" --ingroup pleroma --uid "$UID" pleroma \
 &&  mkdir -p ${HOME} ${DATA}/uploads ${DATA}/static \
