@@ -19,7 +19,7 @@ else
     if [[ $@ ]]; then
 	eval "exec $@"
     else
-	/usr/local/bin/start_pleroma.sh
+	exec /usr/local/bin/start_pleroma.sh
     fi
 fi
 
