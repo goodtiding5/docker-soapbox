@@ -10,7 +10,7 @@ RUN set -ex \
 &&  git clone -b develop https://gitlab.com/goodtiding5/rebased.git /pleroma \
 &&  git clone https://github.com/facebookresearch/fastText.git /fastText
 
-## build rebase
+## building rebase
 
 WORKDIR /pleroma
 
@@ -27,7 +27,7 @@ RUN mix deps.get --only prod \
 &&  mkdir -p /release \
 &&  mix release --path /release
 
-## build fasttext
+## building fasttext
 
 WORKDIR /fastText
 
@@ -78,16 +78,14 @@ RUN set -eux \
 &&  chown -R pleroma:pleroma ${HOME} ${DATA} \
 &&  mkdir -p /etc/pleroma \
 &&  chown -R pleroma:root /etc/pleroma \
-&&  chmod 0644 /usr/share/fasttext/lid.176.ftz \
-&&  mkdir /dist \
-&&  curl -L "https://gitlab.com/soapbox-pub/soapbox/-/jobs/artifacts/v3.2.0/download?job=build-production" -o /dist/soapbox-fe.zip
+&&  chmod 0644 /usr/share/fasttext/lid.176.ftz 
 
 COPY --from=build --chown=0:0 /dist/fasttext /usr/local/bin
 COPY --from=build --chown=pleroma:0 /release ${HOME}
 COPY --from=build --chown=pleroma:0 /pleroma/config/docker.exs /etc/pleroma/config.exs
 
 COPY ./bin /usr/local/bin
-COPY ./entrypoint.sh /entrypoint.sh
+COPY --chmod=0555 /entrypoint.sh /entrypoint.sh
 
 VOLUME $DATA
 
