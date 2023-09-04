@@ -38,7 +38,7 @@ RUN set -ex \
 
 # -------------------------------------------------------------------------------------------------------
 
-FROM alpine:3.16
+FROM alpine:latest
 
 LABEL maintainer="ken@epenguin.com"
 
