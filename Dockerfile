@@ -38,7 +38,7 @@ RUN set -ex \
 
 # -------------------------------------------------------------------------------------------------------
 
-FROM alpine:latest
+FROM alpine:3.18
 
 LABEL maintainer="ken@epenguin.com"
 
@@ -72,6 +72,7 @@ RUN set -eux \
 	exiftool \
 	libmagic \
 	file-dev \
+ 	libcrypto1.1 \
 &&  addgroup --gid "$GID" pleroma \
 &&  adduser --disabled-password --gecos "Pleroma" --home "$HOME" --ingroup pleroma --uid "$UID" pleroma \
 &&  mkdir -p ${HOME} ${DATA}/uploads ${DATA}/static \
