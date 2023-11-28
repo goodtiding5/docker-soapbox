@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------------------------------------
 
-FROM elixir:1.11-alpine as build
+FROM elixir:1.14-alpine as build
 
 ARG MIX_ENV=prod
 
