@@ -7,8 +7,7 @@ ARG MIX_ENV=prod
 RUN set -ex \
 &&  awk 'NR==2' /etc/apk/repositories | sed 's/main/community/' | tee -a /etc/apk/repositories \
 &&  apk --update add --no-cache git gcc g++ musl-dev make cmake file-dev \
-&&  git clone -b develop https://gitlab.com/goodtiding5/rebased.git /pleroma \
-&&  git clone https://github.com/facebookresearch/fastText.git /fastText
+&&  git clone -b develop https://gitlab.com/goodtiding5/rebased.git /pleroma
 
 ## building rebase
 
@@ -27,18 +26,9 @@ RUN mix deps.get --only prod \
 &&  mkdir -p /release \
 &&  mix release --path /release
 
-## building fasttext
-
-WORKDIR /fastText
-
-RUN set -ex \
-&&  make \
-&&  mkdir -p /dist \
-&&  cp fasttext /dist
-
 # -------------------------------------------------------------------------------------------------------
 
-FROM alpine:latest
+FROM alpine:edge
 
 LABEL maintainer="ken@epenguin.com"
 
@@ -73,6 +63,8 @@ RUN set -eux \
 	libmagic \
 	file-dev \
  	libcrypto3 \
+	fasttext \
+	fasttext-libs \
 &&  addgroup --gid "$GID" pleroma \
 &&  adduser --disabled-password --gecos "Pleroma" --home "$HOME" --ingroup pleroma --uid "$UID" pleroma \
 &&  mkdir -p ${HOME} ${DATA}/uploads ${DATA}/static \
@@ -81,7 +73,6 @@ RUN set -eux \
 &&  chown -R pleroma:root /etc/pleroma \
 &&  chmod 0644 /usr/share/fasttext/lid.176.ftz 
 
-COPY --from=build --chown=0:0 /dist/fasttext /usr/local/bin
 COPY --from=build --chown=pleroma:0 /release ${HOME}
 COPY --from=build --chown=pleroma:0 --chmod=0440 /pleroma/config/docker.exs /etc/pleroma/config.exs
 
