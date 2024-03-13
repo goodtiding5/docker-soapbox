@@ -85,8 +85,8 @@ COPY --from=build --chown=0:0 /dist/fasttext /usr/local/bin
 COPY --from=build --chown=pleroma:0 /release ${HOME}
 COPY --from=build --chown=pleroma:0 --chmod=0440 /pleroma/config/docker.exs /etc/pleroma/config.exs
 
-COPY ./bin /usr/local/bin
-COPY --chmod=0555 /entrypoint.sh /entrypoint.sh
+COPY ./bin/start_pleroma.sh /usr/local/bin/start_pleroma.sh
+COPY --chmod=0555 /entrypoint.sh /usr/local/bin/entrypoint.sh
 
 VOLUME $DATA
 
@@ -101,5 +101,5 @@ HEALTHCHECK \
 
 USER pleroma
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 

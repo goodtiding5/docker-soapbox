@@ -2,8 +2,8 @@
 
 set -e
 
-WORKDIR=/opt/pleroma
-DATADIR=/var/lib/pleroma
+WORKDIR=${WORKDIR:-/opt/pleroma}
+DATADIR=${DATADIR:-/var/lib/pleroma}
 
 #SOAPBOX_DIST="https://gitlab.com/soapbox-pub/soapbox/-/jobs/artifacts/v3.2.0/download?job=build-production"
 SOAPBOX_DIST="https://gitlab.com/soapbox-pub/soapbox/-/jobs/artifacts/develop/download?job=build-production"
